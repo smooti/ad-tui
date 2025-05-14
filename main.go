@@ -26,7 +26,7 @@ func connect() error {
 	if err != nil {
 		return fmt.Errorf("failed to dial LDAP server: %w", err)
 	}
-	log.Println("Successfully connected to LDAP server.")
+	log.Println("INFO ==> Successfully connected to LDAP server.")
 	return nil
 }
 
@@ -135,7 +135,7 @@ func main() {
 			log.Printf("Unable to bind as %s some operations might fail: %v", username, err)
 		}
 	} else {
-		log.Println("Skipping authentication.")
+		log.Println("INFO ==> Skipping authentication.")
 	}
 
 	example1()
