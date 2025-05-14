@@ -1,8 +1,0 @@
-dn: ou=MyCustomOU,dc=example,dc=org
-objectClass: organizationalUnit
-ou: MyCustomOU
-
-dn: cn=Custom User,ou=MyCustomOU,dc=example,dc=org
-objectClass: inetOrgPerson
-cn: Custom User
-sn: User

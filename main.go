@@ -138,6 +138,6 @@ func main() {
 		log.Println("Skipping authentication.")
 	}
 
-	// example1()
-	example2()
+	example1()
+	// example2()
 }
