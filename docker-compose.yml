@@ -11,5 +11,3 @@ services:
       - LDAP_USERS=user-1,user-2,user-3,user-4
       - LDAP_PASSWORDS=password1,password2,password3,password4
       - LDAP_PORT_NUMBER=1389
-    volumes:
-      - ./custom.ldif:/bitnami/openldap/ldif/custom.ldif:ro
