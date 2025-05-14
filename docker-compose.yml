@@ -8,11 +8,6 @@ services:
       - LDAP_ROOT=dc=example,dc=org
       - LDAP_ADMIN_USERNAME=admin
       - LDAP_ADMIN_PASSWORD=adminpassword
-      - LDAP_USERS=user-1,user-2
-      - LDAP_PASSWORDS=password1,password2
       - LDAP_PORT_NUMBER=1389
     volumes:
-      - 'openldap_data:/bitnami/openldap'
-volumes:
-  openldap_data:
-    driver: local
+      - ./custom.ldif:/bitnami/openldap/ldif/custom.ldif:ro

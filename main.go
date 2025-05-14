@@ -80,7 +80,7 @@ func searchEntries(searchBaseDN string, filter string, attributes []string) (*ld
 // NOTE A Base query searches only the current path or object.
 // A OneLevel query searches the immediate children of that path or object.
 // A Subtree query searches the current path or object and all children of that path or object.
-func searchForOUs(conn *ldap.Conn, baseDN string) ([]*ldap.Entry, error) {
+func searchForOUs(conn *ldap.Conn, baseDN string) (*ldap.SearchResult, error) {
 	if client == nil {
 		return nil, fmt.Errorf("not connected to LDAP server")
 	}
@@ -101,10 +101,10 @@ func searchForOUs(conn *ldap.Conn, baseDN string) ([]*ldap.Entry, error) {
 	if err != nil {
 		return nil, err
 	}
-	return searchResult.Entries, nil
+	return searchResult, nil
 }
 
-func example() {
+func example1() {
 	filter := "(objectClass=inetOrgPerson)"
 	r, _ := searchEntries(baseDN, filter, []string{"uid", "cn"})
 	for _, entry := range r.Entries {
@@ -112,6 +112,13 @@ func example() {
 		fmt.Printf("CN: %v\n", entry.GetAttributeValue("cn"))
 		fmt.Printf("UID: %v\n", entry.GetAttributeValue("uid"))
 		fmt.Println()
+	}
+}
+
+func example2() {
+	r, _ := searchForOUs(client, baseDN)
+	for _, entry := range r.Entries {
+		fmt.Println(entry.DN)
 	}
 }
 
@@ -131,5 +138,6 @@ func main() {
 		log.Println("Skipping authentication.")
 	}
 
-	example()
+	// example1()
+	example2()
 }
