@@ -51,19 +51,19 @@ func bindUser(username string, password string) error {
 	return nil
 }
 
-func searchEntries(searchBaseDN string, filter string, attributes []string) (*ldap.SearchResult, error) {
+func searchEntries(searchBaseDN string, searchScope int, filter string, attributes []string) (*ldap.SearchResult, error) {
 	if client == nil {
 		return nil, fmt.Errorf("not connected to LDAP server")
 	}
 
 	searchRequest := ldap.NewSearchRequest(
 		searchBaseDN,           // Base DN: The starting point of the search
-		ldap.ScopeWholeSubtree, // Scope: Search the whole subtree (alternatives: ldap.ScopeSingleLevel, ldap.ScopeBaseObject)
+		searchScope,            // Scope: Search scope (ldap.ScopeWholeSubtree, ldap.ScopeSingleLevel, ldap.ScopeBaseObject)
 		ldap.NeverDerefAliases, // DerefAliases: How to handle aliases
 		0,                      // SizeLimit: Max number of entries to return (0 for server's default)
 		0,                      // TimeLimit: Max time for search (0 for server's default)
 		false,                  // TypesOnly: false to get values, true to get only types
-		filter,                 // Filter: The LDAP search filter (e.g., "(objectClass=person)")
+		filter,                 // Filter: The LDAP search filter (e.g., "(objectClass=person)", "(objectClass=organizationalUnit)")
 		attributes,             // Attributes: A list of attributes to retrieve (e.g., []string{"cn", "mail"})
 		nil,                    // Controls: Optional LDAP controls
 	)
@@ -76,49 +76,14 @@ func searchEntries(searchBaseDN string, filter string, attributes []string) (*ld
 
 }
 
-// Get OU's of baseDN
-// NOTE A Base query searches only the current path or object.
-// A OneLevel query searches the immediate children of that path or object.
-// A Subtree query searches the current path or object and all children of that path or object.
-func searchForOUs(conn *ldap.Conn, baseDN string) (*ldap.SearchResult, error) {
-	if client == nil {
-		return nil, fmt.Errorf("not connected to LDAP server")
-	}
-
-	searchRequest := ldap.NewSearchRequest(
-		baseDN,                             // Base DN: The starting point of the search
-		ldap.ScopeSingleLevel,              // Scope: Search the whole subtree (alternatives: ldap.ScopeSingleLevel, ldap.ScopeBaseObject)
-		ldap.NeverDerefAliases,             // DerefAliases: How to handle aliases
-		0,                                  // SizeLimit: Max number of entries to return (0 for server's default)
-		0,                                  // TimeLimit: Max time for search (0 for server's default)
-		false,                              // TypesOnly: false to get values, true to get only types
-		"(objectClass=organizationalUnit)", // Filter: The LDAP search filter (e.g., "(objectClass=person)")
-		[]string{"ou, dn"},                 // Attributes: A list of attributes to retrieve (e.g., []string{"cn", "mail"})
-		nil,                                // Controls: Optional LDAP controls
-	)
-
-	searchResult, err := conn.Search(searchRequest)
-	if err != nil {
-		return nil, err
-	}
-	return searchResult, nil
-}
-
 func example1() {
 	filter := "(objectClass=inetOrgPerson)"
-	r, _ := searchEntries(baseDN, filter, []string{"uid", "cn"})
+	r, _ := searchEntries(baseDN, ldap.ScopeWholeSubtree, filter, []string{"uid", "cn"})
 	for _, entry := range r.Entries {
 		fmt.Printf("DN: %v\n", entry.DN)
 		fmt.Printf("CN: %v\n", entry.GetAttributeValue("cn"))
 		fmt.Printf("UID: %v\n", entry.GetAttributeValue("uid"))
 		fmt.Println()
-	}
-}
-
-func example2() {
-	r, _ := searchForOUs(client, baseDN)
-	for _, entry := range r.Entries {
-		fmt.Println(entry.DN)
 	}
 }
 
@@ -139,5 +104,4 @@ func main() {
 	}
 
 	example1()
-	// example2()
 }
