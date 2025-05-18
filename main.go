@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/charmbracelet/log"
 	"github.com/go-ldap/ldap/v3"
@@ -90,7 +91,8 @@ func example1() {
 func main() {
 	// Connect to server
 	if err := connect(); err != nil {
-		log.Error("Initial connection failed: %v", err)
+		log.Error("Initial connection failed", "err", err)
+		os.Exit(1)
 	}
 	defer closeConnection()
 
