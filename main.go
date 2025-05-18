@@ -99,7 +99,7 @@ func main() {
 	// Bind (Authenticate) if specified- Essential for write operations
 	if username != "" && password != "" {
 		if err := bindUser(username, password); err != nil {
-			log.Error("Unable to bind as %s some operations might fail: %v", username, err)
+			log.Error(fmt.Sprintf("Unable to bind as %s some operations might fail", username), "err", err)
 		}
 	} else {
 		log.Info("Skipping authentication.")
