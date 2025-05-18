@@ -52,6 +52,7 @@ func bindUser(username string, password string) error {
 	return nil
 }
 
+// Search for various objects using ldap filters
 func searchEntries(searchBaseDN string, searchScope int, filter string, attributes []string) (*ldap.SearchResult, error) {
 	if client == nil {
 		return nil, fmt.Errorf("not connected to LDAP server")
