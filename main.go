@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"log"
 
+	"github.com/charmbracelet/log"
 	"github.com/go-ldap/ldap/v3"
 )
 
@@ -26,7 +26,7 @@ func connect() error {
 	if err != nil {
 		return fmt.Errorf("failed to dial LDAP server: %w", err)
 	}
-	log.Println("INFO ==> Successfully connected to LDAP server.")
+	log.Info("Successfully connected to LDAP server.")
 	return nil
 }
 
@@ -34,7 +34,7 @@ func connect() error {
 func closeConnection() {
 	if client != nil {
 		client.Close()
-		log.Println("Connection closed.")
+		log.Info("Connection closed.")
 	}
 }
 
@@ -47,7 +47,7 @@ func bindUser(username string, password string) error {
 	if err != nil {
 		return fmt.Errorf("failed to bind as %s: %w", username, err)
 	}
-	log.Printf("Sussesfully bound as %s", username)
+	log.Info("Sussesfully bound as %s", username)
 	return nil
 }
 
@@ -125,17 +125,17 @@ func example2() {
 func main() {
 	// Connect to server
 	if err := connect(); err != nil {
-		log.Fatalf("Initial connection failed: %v", err)
+		log.Error("Initial connection failed: %v", err)
 	}
 	defer closeConnection()
 
 	// Bind (Authenticate) if specified- Essential for write operations
 	if username != "" && password != "" {
 		if err := bindUser(username, password); err != nil {
-			log.Printf("Unable to bind as %s some operations might fail: %v", username, err)
+			log.Error("Unable to bind as %s some operations might fail: %v", username, err)
 		}
 	} else {
-		log.Println("INFO ==> Skipping authentication.")
+		log.Info("Skipping authentication.")
 	}
 
 	example1()
